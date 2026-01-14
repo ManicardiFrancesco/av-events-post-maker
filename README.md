@@ -20,7 +20,7 @@ A minimal, user-friendly HTML + JavaScript tool to compose a centered grid layou
 - Typography: adjust max event size with the slider or `--event-font-max`.
 - Row spacing: adjust with slider or number input (`--grid-row-gap`).
 - Column spacing: adjust with slider or number input (`--grid-column-gap`).
-- Presets: save, export JSON, and import JSON from the presets panel.
+- Presets: save, export JSON, or copy/apply the current JSON from the presets panel.
 - Sections: every panel section is collapsible and remembers its open/closed state.
 - Sample preset: a built-in “sample” preset is always available and loads by default on first use.
 

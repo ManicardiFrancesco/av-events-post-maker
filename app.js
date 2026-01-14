@@ -9,6 +9,7 @@ const savePresetButton = $("save-preset");
 const clearStateButton = $("clear-state");
 const presetsList = $("presets-list");
 const presetJsonInput = $("preset-json");
+const copyJsonButton = $("copy-json");
 const importPresetButton = $("import-preset");
 const gridOffsetXInput = $("grid-offset-x");
 const gridOffsetYInput = $("grid-offset-y");
@@ -148,15 +149,25 @@ const fallback = (value, fallbackValue) => {
 
 const sanitizeInlineText = (value) => value.replace(/[\r\n]+/g, " ");
 
+const buildPresetData = () => ({
+  grid: state.grid,
+  events: state.events,
+  header: state.header,
+  footer: state.footer,
+  layout: state.layout,
+  background: state.background,
+  backgroundUrlInput: bgUrlInput.value,
+});
+
+const buildPresetPayload = (name) => ({
+  name,
+  data: buildPresetData(),
+  savedAt: new Date().toISOString(),
+});
+
 const saveState = () => {
   const payload = {
-    grid: state.grid,
-    events: state.events,
-    header: state.header,
-    footer: state.footer,
-    layout: state.layout,
-    background: state.background,
-    backgroundUrlInput: bgUrlInput.value,
+    ...buildPresetData(),
   };
 
   try {
@@ -893,19 +904,7 @@ savePresetButton.addEventListener("click", () => {
   }
 
   const presets = loadPresets();
-  const payload = {
-    name,
-    data: {
-      grid: state.grid,
-      events: state.events,
-      header: state.header,
-      footer: state.footer,
-      layout: state.layout,
-      background: state.background,
-      backgroundUrlInput: bgUrlInput.value,
-    },
-    savedAt: new Date().toISOString(),
-  };
+  const payload = buildPresetPayload(name);
 
   const existingIndex = presets.findIndex((preset) => preset.name === name);
   if (existingIndex >= 0) {
@@ -971,6 +970,23 @@ presetsList.addEventListener("click", (event) => {
   }
 });
 
+copyJsonButton.addEventListener("click", async () => {
+  const name = presetNameInput.value.trim() || "current";
+  const payload = buildPresetPayload(name);
+  const json = JSON.stringify({ name: payload.name, data: payload.data }, null, 2);
+  presetJsonInput.value = json;
+  presetJsonInput.focus();
+  presetJsonInput.select();
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(json);
+    } catch (error) {
+      console.warn("Failed to copy JSON to clipboard", error);
+    }
+  }
+});
+
 clearStateButton.addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   applyState(DEFAULT_STATE);
@@ -982,7 +998,6 @@ clearStateButton.addEventListener("click", () => {
 
 importPresetButton.addEventListener("click", () => {
   const raw = presetJsonInput.value.trim();
-  console.log("[preset-import] raw length", raw.length);
   if (!raw) {
     alert("Paste preset JSON first.");
     return;
@@ -992,48 +1007,23 @@ importPresetButton.addEventListener("click", () => {
   try {
     parsed = JSON.parse(raw);
   } catch (error) {
-    console.error("[preset-import] JSON parse error", error);
     alert("Invalid JSON.");
     return;
   }
-  console.log("[preset-import] parsed", parsed);
 
   const data =
     parsed && typeof parsed === "object" && parsed.data ? parsed.data : parsed;
   const inputName = presetNameInput.value.trim();
-  let name =
+  const name =
     parsed && typeof parsed === "object" && parsed.name
       ? parsed.name
       : inputName || `Imported preset ${Date.now()}`;
-  if (name === SAMPLE_PRESET.name) {
-    name = `${SAMPLE_PRESET.name}-${Date.now()}`;
-  }
 
   if (!data || typeof data !== "object") {
     alert("Preset JSON is missing data.");
     return;
   }
-  console.log("[preset-import] resolved name", name);
-  console.log("[preset-import] data", data);
 
-  const presets = loadPresets();
-  const payload = {
-    name,
-    data,
-    savedAt: new Date().toISOString(),
-  };
-
-  const existingIndex = presets.findIndex((preset) => preset.name === name);
-  if (existingIndex >= 0) {
-    presets[existingIndex] = payload;
-  } else {
-    presets.push(payload);
-  }
-
-  savePresets(presets);
-  renderPresets();
-
-  console.log("[preset-import] applying preset");
   applyState(data);
   renderEditors();
   renderGrid();
@@ -1041,7 +1031,6 @@ importPresetButton.addEventListener("click", () => {
   setBackground(state.background);
   saveState();
   presetNameInput.value = name;
-  console.log("[preset-import] done");
 });
 
 sections.forEach((section) => {
