@@ -1,0 +1,215 @@
+:root {
+  --font-ui: "Space Grotesk", "Helvetica Neue", sans-serif;
+  --font-card: "Space Grotesk", "Helvetica Neue", sans-serif;
+  --city-color: #e0382e;
+  --ink: #1f1b16;
+  --muted: #6b6158;
+  --panel: #fdfbf7;
+  --panel-border: rgba(31, 27, 22, 0.12);
+  --page-bg: radial-gradient(circle at top, #f6e9d6 0%, #f2efe9 45%, #efe7dd 100%);
+  --card-width: 1080px;
+  --card-height: 1350px;
+  --preview-scale: 0.38;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-ui);
+  color: var(--ink);
+  background: var(--page-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 32px clamp(16px, 3vw, 48px) 48px;
+}
+
+.header {
+  max-width: 1100px;
+}
+
+.header h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
+  gap: 32px;
+  align-items: start;
+  max-width: 1100px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 18px 40px rgba(31, 27, 22, 0.12);
+}
+
+.panel h2 {
+  margin: 12px 0 0;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.field span {
+  color: var(--muted);
+}
+
+.field input {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  background: #fffdf9;
+}
+
+.primary {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: none;
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: #1f1b16;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(31, 27, 22, 0.22);
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.preview-frame {
+  width: calc(var(--card-width) * var(--preview-scale));
+  height: calc(var(--card-height) * var(--preview-scale));
+  border-radius: 28px;
+  border: 1px solid rgba(31, 27, 22, 0.1);
+  background: #f1ece4;
+  box-shadow: 0 24px 60px rgba(31, 27, 22, 0.18);
+  overflow: hidden;
+}
+
+.card {
+  width: var(--card-width);
+  height: var(--card-height);
+  background: radial-gradient(circle at top, #fbf5eb 0%, #efe0d0 55%, #e8d5c2 100%);
+  transform: scale(var(--preview-scale));
+  transform-origin: top left;
+  position: relative;
+  display: flex;
+}
+
+.card.has-background {
+  background-size: cover;
+  background-position: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, 1fr);
+  gap: 24px;
+  width: 100%;
+  height: 100%;
+  padding: 140px 120px;
+  text-align: center;
+  font-family: var(--font-card);
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+  font-weight: 600;
+  line-height: 1.05;
+}
+
+.city {
+  color: var(--city-color);
+}
+
+.hint {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .preview {
+    align-items: center;
+  }
+
+  .preview-frame {
+    width: calc(var(--card-width) * 0.3);
+    height: calc(var(--card-height) * 0.3);
+  }
+
+  .card {
+    transform: scale(0.3);
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 24px 16px 32px;
+  }
+
+  .preview-frame {
+    width: calc(var(--card-width) * 0.24);
+    height: calc(var(--card-height) * 0.24);
+  }
+
+  .card {
+    transform: scale(0.24);
+  }
+
+  .cell {
+    font-size: 64px;
+  }
+}
