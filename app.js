@@ -38,7 +38,7 @@ const PRESETS_KEY = "instagram-post-maker:presets:v1";
 const SECTION_STATE_KEY = "instagram-post-maker:sections:v1";
 
 const SAMPLE_PRESET = {
-  name: "sample",
+  name: "asd",
   data: {
     grid: {
       cols: 3,
@@ -104,10 +104,10 @@ const SAMPLE_PRESET = {
     },
     layout: {
       offsetX: 0,
-      offsetY: 0,
+      offsetY: 99,
       fontMax: 60,
-      rowGap: 20,
-      columnGap: 28,
+      rowGap: 26,
+      columnGap: 100,
     },
     background: "https://i.ibb.co/HD8QwNV7/BASE-X-LOCANDINA-45.png",
     backgroundUrlInput: "https://i.ibb.co/HD8QwNV7/BASE-X-LOCANDINA-45.png",
