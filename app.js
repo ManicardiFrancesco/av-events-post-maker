@@ -217,17 +217,17 @@ const loadSectionState = () => {
   }
 };
 
-const openHelpModal = () => {
-  if (helpModal) {
-    helpModal.hidden = false;
+const setHelpModalOpen = (open) => {
+  if (!helpModal) {
+    return;
   }
+  helpModal.classList.toggle("is-open", open);
+  helpModal.hidden = !open;
+  helpModal.setAttribute("aria-hidden", open ? "false" : "true");
 };
 
-const closeHelpModal = () => {
-  if (helpModal) {
-    helpModal.hidden = true;
-  }
-};
+const openHelpModal = () => setHelpModalOpen(true);
+const closeHelpModal = () => setHelpModalOpen(false);
 
 const applyState = (payload) => {
   if (!payload || typeof payload !== "object") {
@@ -1070,7 +1070,12 @@ if (helpModal) {
     if (!(target instanceof HTMLElement)) {
       return;
     }
-    if (target.dataset.action === "close" || target.classList.contains("modal-overlay")) {
+    const dialog = helpModal.querySelector(".modal-dialog");
+    if (
+      target.dataset.action === "close" ||
+      target.classList.contains("modal-overlay") ||
+      (dialog && !dialog.contains(target))
+    ) {
       closeHelpModal();
     }
   });

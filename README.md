@@ -1,4 +1,4 @@
-# Instagram Post Maker
+# AV Events Post Maker
 
 A minimal, user-friendly HTML + JavaScript tool to compose a centered grid layout and export it as a PNG for Instagram.
 

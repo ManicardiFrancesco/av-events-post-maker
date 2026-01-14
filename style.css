@@ -432,9 +432,13 @@ body {
 .modal {
   position: fixed;
   inset: 0;
-  display: grid;
+  display: none;
   place-items: center;
   z-index: 20;
+}
+
+.modal.is-open {
+  display: grid;
 }
 
 .modal-overlay {
