@@ -12,14 +12,14 @@ const presetJsonInput = $("preset-json");
 const importPresetButton = $("import-preset");
 const gridOffsetXInput = $("grid-offset-x");
 const gridOffsetYInput = $("grid-offset-y");
-const gridOffsetXValue = $("grid-offset-x-value");
-const gridOffsetYValue = $("grid-offset-y-value");
+const gridOffsetXNumber = $("grid-offset-x-number");
+const gridOffsetYNumber = $("grid-offset-y-number");
 const gridRowGapInput = $("grid-row-gap");
-const gridRowGapValue = $("grid-row-gap-value");
+const gridRowGapNumber = $("grid-row-gap-number");
 const gridColumnGapInput = $("grid-column-gap");
-const gridColumnGapValue = $("grid-column-gap-value");
+const gridColumnGapNumber = $("grid-column-gap-number");
 const fontMaxInput = $("font-max");
-const fontMaxValue = $("font-max-value");
+const fontMaxNumber = $("font-max-number");
 const headerEnabledInput = $("header-enabled");
 const headerTextInput = $("header-text");
 const footerEnabledInput = $("footer-enabled");
@@ -37,35 +37,85 @@ const STORAGE_KEY = "instagram-post-maker:v1";
 const PRESETS_KEY = "instagram-post-maker:presets:v1";
 const SECTION_STATE_KEY = "instagram-post-maker:sections:v1";
 
-const DEFAULT_STATE = {
-  grid: {
-    cols: Number(gridColsInput.value) || 2,
-    rows: Number(gridRowsInput.value) || 2,
-  },
-  events: [
-    {
-      city: "Lisbon",
-      date: "17/01",
-      street: "Rua das Flores",
-      hours: "15:30 - 18:30",
+const SAMPLE_PRESET = {
+  name: "sample",
+  data: {
+    grid: {
+      cols: 3,
+      rows: 3,
     },
-  ],
-  header: {
-    enabled: false,
-    text: "",
+    events: [
+      {
+        city: "Pordenone",
+        date: "24/01",
+        street: "Via Mazzini",
+        hours: "15:30 - 19:30",
+      },
+      {
+        city: "Grosseto",
+        date: "24/01",
+        street: "Corso Carducci",
+        hours: "15:45 - 18:45",
+      },
+      {
+        city: "Venezia",
+        date: "25/01",
+        street: "Campo San Bortolo",
+        hours: "16:00 - 19:00",
+      },
+      {
+        city: "Treviso",
+        date: "25/01",
+        street: "Vicolo del Duomo",
+        hours: "15:00 - 19:00",
+      },
+      {
+        city: "Chiavari",
+        date: "24/01",
+        street: "Piazza Mazzini",
+        hours: "15:30 - 18:30",
+      },
+      {
+        city: "Milano",
+        date: "24/01",
+        street: "Piazza Mercanti",
+        hours: "14:30 - 18:30",
+      },
+      {
+        city: "",
+        date: "",
+        street: "",
+        hours: "",
+      },
+      {
+        city: "",
+        date: "",
+        street: "",
+        hours: "",
+      },
+    ],
+    header: {
+      enabled: false,
+      text: "",
+    },
+    footer: {
+      enabled: false,
+      text: "",
+    },
+    layout: {
+      offsetX: 0,
+      offsetY: 0,
+      fontMax: 60,
+      rowGap: 20,
+      columnGap: 28,
+    },
+    background: "https://i.ibb.co/HD8QwNV7/BASE-X-LOCANDINA-45.png",
+    backgroundUrlInput: "https://i.ibb.co/HD8QwNV7/BASE-X-LOCANDINA-45.png",
   },
-  footer: {
-    enabled: false,
-    text: "",
-  },
-  layout: {
-    offsetX: 0,
-    offsetY: 0,
-    fontMax: 60,
-    rowGap: 20,
-    columnGap: 28,
-  },
-  background: "",
+};
+
+const DEFAULT_STATE = {
+  ...SAMPLE_PRESET.data,
   fontBase: 60,
 };
 
@@ -184,28 +234,28 @@ const applyState = (payload) => {
   state.layout = {
     offsetX: clampNumber(
       parseNumber(payload.layout?.offsetX, DEFAULT_STATE.layout.offsetX),
-      -200,
-      200
+      -400,
+      400
     ),
     offsetY: clampNumber(
       parseNumber(payload.layout?.offsetY, DEFAULT_STATE.layout.offsetY),
-      -200,
-      200
+      -400,
+      400
     ),
     fontMax: clampNumber(
       parseNumber(payload.layout?.fontMax, DEFAULT_STATE.layout.fontMax),
       24,
-      120
+      200
     ),
     rowGap: clampNumber(
       parseNumber(payload.layout?.rowGap, DEFAULT_STATE.layout.rowGap),
       0,
-      80
+      160
     ),
     columnGap: clampNumber(
       parseNumber(payload.layout?.columnGap, DEFAULT_STATE.layout.columnGap),
       0,
-      80
+      160
     ),
   };
 
@@ -222,11 +272,6 @@ const applyState = (payload) => {
   footerEnabledInput.checked = state.footer.enabled;
   footerTextInput.value = state.footer.text;
   footerTextInput.disabled = !state.footer.enabled;
-  gridOffsetXInput.value = state.layout.offsetX;
-  gridOffsetYInput.value = state.layout.offsetY;
-  fontMaxInput.value = state.layout.fontMax;
-  gridRowGapInput.value = state.layout.rowGap;
-  gridColumnGapInput.value = state.layout.columnGap;
   applyLayout();
 };
 
@@ -250,16 +295,19 @@ const loadPresets = () => {
   try {
     const raw = localStorage.getItem(PRESETS_KEY);
     if (!raw) {
-      return [];
+      return [{ ...SAMPLE_PRESET, locked: true }];
     }
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) {
-      return [];
+      return [{ ...SAMPLE_PRESET, locked: true }];
     }
-    return parsed;
+    const filtered = parsed.filter(
+      (preset) => preset && typeof preset === "object" && preset.name !== SAMPLE_PRESET.name
+    );
+    return [{ ...SAMPLE_PRESET, locked: true }, ...filtered];
   } catch (error) {
     console.warn("Failed to load presets", error);
-    return [];
+    return [{ ...SAMPLE_PRESET, locked: true }];
   }
 };
 
@@ -310,6 +358,10 @@ const renderPresets = () => {
     deleteButton.textContent = "Delete";
     deleteButton.className = "danger";
     deleteButton.dataset.action = "delete";
+    if (preset.locked || preset.name === SAMPLE_PRESET.name) {
+      deleteButton.disabled = true;
+      deleteButton.title = "Sample preset cannot be deleted.";
+    }
 
     controls.appendChild(loadButton);
     controls.appendChild(exportButton);
@@ -366,11 +418,16 @@ const applyLayout = () => {
     "--grid-column-gap",
     `${state.layout.columnGap}px`
   );
-  gridOffsetXValue.textContent = `${state.layout.offsetX}px`;
-  gridOffsetYValue.textContent = `${state.layout.offsetY}px`;
-  fontMaxValue.textContent = `${state.layout.fontMax}px`;
-  gridRowGapValue.textContent = `${state.layout.rowGap}px`;
-  gridColumnGapValue.textContent = `${state.layout.columnGap}px`;
+  gridOffsetXInput.value = state.layout.offsetX;
+  gridOffsetXNumber.value = state.layout.offsetX;
+  gridOffsetYInput.value = state.layout.offsetY;
+  gridOffsetYNumber.value = state.layout.offsetY;
+  fontMaxInput.value = state.layout.fontMax;
+  fontMaxNumber.value = state.layout.fontMax;
+  gridRowGapInput.value = state.layout.rowGap;
+  gridRowGapNumber.value = state.layout.rowGap;
+  gridColumnGapInput.value = state.layout.columnGap;
+  gridColumnGapNumber.value = state.layout.columnGap;
 };
 
 const fitLineToWidth = (line, baseSize) => {
@@ -616,38 +673,54 @@ gridColsInput.addEventListener("input", updateGridFromInputs);
 
 gridRowsInput.addEventListener("input", updateGridFromInputs);
 
-gridOffsetXInput.addEventListener("input", (event) => {
-  state.layout.offsetX = clampNumber(Number(event.target.value), -200, 200);
+const updateLayoutValue = (key, value, min, max) => {
+  state.layout[key] = clampNumber(Number(value), min, max);
   applyLayout();
+  if (key === "fontMax") {
+    updateFontScale();
+  }
+  renderPreview();
   saveState();
+};
+
+gridOffsetXInput.addEventListener("input", (event) => {
+  updateLayoutValue("offsetX", event.target.value, -400, 400);
+});
+
+gridOffsetXNumber.addEventListener("input", (event) => {
+  updateLayoutValue("offsetX", event.target.value, -400, 400);
 });
 
 gridOffsetYInput.addEventListener("input", (event) => {
-  state.layout.offsetY = clampNumber(Number(event.target.value), -200, 200);
-  applyLayout();
-  saveState();
+  updateLayoutValue("offsetY", event.target.value, -400, 400);
+});
+
+gridOffsetYNumber.addEventListener("input", (event) => {
+  updateLayoutValue("offsetY", event.target.value, -400, 400);
 });
 
 gridRowGapInput.addEventListener("input", (event) => {
-  state.layout.rowGap = clampNumber(Number(event.target.value), 0, 80);
-  applyLayout();
-  renderPreview();
-  saveState();
+  updateLayoutValue("rowGap", event.target.value, 0, 160);
+});
+
+gridRowGapNumber.addEventListener("input", (event) => {
+  updateLayoutValue("rowGap", event.target.value, 0, 160);
 });
 
 gridColumnGapInput.addEventListener("input", (event) => {
-  state.layout.columnGap = clampNumber(Number(event.target.value), 0, 80);
-  applyLayout();
-  renderPreview();
-  saveState();
+  updateLayoutValue("columnGap", event.target.value, 0, 160);
+});
+
+gridColumnGapNumber.addEventListener("input", (event) => {
+  updateLayoutValue("columnGap", event.target.value, 0, 160);
 });
 
 fontMaxInput.addEventListener("input", (event) => {
-  state.layout.fontMax = clampNumber(Number(event.target.value), 24, 120);
-  applyLayout();
-  updateFontScale();
-  renderPreview();
-  saveState();
+  updateLayoutValue("fontMax", event.target.value, 24, 200);
+});
+
+fontMaxNumber.addEventListener("input", (event) => {
+  updateLayoutValue("fontMax", event.target.value, 24, 200);
 });
 
 addEventButton.addEventListener("click", addEvent);
@@ -814,6 +887,10 @@ savePresetButton.addEventListener("click", () => {
     alert("Please provide a preset name.");
     return;
   }
+  if (name === SAMPLE_PRESET.name) {
+    alert("The sample preset name is reserved. Please choose another name.");
+    return;
+  }
 
   const presets = loadPresets();
   const payload = {
@@ -823,6 +900,7 @@ savePresetButton.addEventListener("click", () => {
       events: state.events,
       header: state.header,
       footer: state.footer,
+      layout: state.layout,
       background: state.background,
       backgroundUrlInput: bgUrlInput.value,
     },
@@ -838,14 +916,6 @@ savePresetButton.addEventListener("click", () => {
 
   savePresets(presets);
   renderPresets();
-
-  applyState(data);
-  renderEditors();
-  renderGrid();
-  renderPreview();
-  setBackground(state.background);
-  saveState();
-  presetNameInput.value = name;
 });
 
 presetsList.addEventListener("click", (event) => {
@@ -871,6 +941,9 @@ presetsList.addEventListener("click", (event) => {
   }
 
   if (target.dataset.action === "delete") {
+    if (presetName === SAMPLE_PRESET.name) {
+      return;
+    }
     const updated = presets.filter((entry) => entry.name !== presetName);
     savePresets(updated);
     renderPresets();
@@ -928,10 +1001,13 @@ importPresetButton.addEventListener("click", () => {
   const data =
     parsed && typeof parsed === "object" && parsed.data ? parsed.data : parsed;
   const inputName = presetNameInput.value.trim();
-  const name =
+  let name =
     parsed && typeof parsed === "object" && parsed.name
       ? parsed.name
       : inputName || `Imported preset ${Date.now()}`;
+  if (name === SAMPLE_PRESET.name) {
+    name = `${SAMPLE_PRESET.name}-${Date.now()}`;
+  }
 
   if (!data || typeof data !== "object") {
     alert("Preset JSON is missing data.");

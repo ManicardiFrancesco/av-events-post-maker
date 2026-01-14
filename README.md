@@ -18,10 +18,11 @@ A minimal, user-friendly HTML + JavaScript tool to compose a centered grid layou
 - Card colors: `--card-bg` for background and `--card-text` for default text.
 - Grid offset: sliders move the event grid on x/y using `--grid-offset-x` and `--grid-offset-y`.
 - Typography: adjust max event size with the slider or `--event-font-max`.
-- Row spacing: adjust the grid row gap with the slider or `--grid-row-gap`.
-- Column spacing: adjust the grid column gap with the slider or `--grid-column-gap`.
+- Row spacing: adjust with slider or number input (`--grid-row-gap`).
+- Column spacing: adjust with slider or number input (`--grid-column-gap`).
 - Presets: save, export JSON, and import JSON from the presets panel.
 - Sections: every panel section is collapsible and remembers its open/closed state.
+- Sample preset: a built-in “sample” preset is always available and loads by default on first use.
 
 ## Notes
 - If a background URL does not download in the PNG, use an uploaded image instead (some hosts block CORS).

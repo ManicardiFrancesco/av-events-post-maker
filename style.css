@@ -185,11 +185,14 @@ body {
   flex: 1;
 }
 
-.slider span {
-  min-width: 52px;
-  text-align: right;
+.slider-number {
+  width: 72px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  font-family: var(--font-ui);
   font-size: 13px;
-  color: var(--muted);
+  background: #fffdf9;
 }
 
 .primary {
