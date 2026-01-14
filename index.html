@@ -8,7 +8,12 @@
   </head>
   <body>
     <header class="header">
-      <h1>Instagram Post Maker</h1>
+      <div class="header-title">
+        <h1>Instagram Post Maker</h1>
+        <button id="help-button" class="help-button" type="button" title="How this works">
+          ?
+        </button>
+      </div>
       <p>Fill in the details, set a background, and download a PNG.</p>
     </header>
 
@@ -88,7 +93,14 @@
           <summary>Events</summary>
           <div class="section-body">
             <div id="events" class="events span-full"></div>
-            <button id="add-event" class="secondary span-full" type="button">Add Event</button>
+            <button
+              id="add-event"
+              class="secondary span-full"
+              type="button"
+              title="Add another event block"
+            >
+              Add Event
+            </button>
           </div>
         </details>
 
@@ -125,8 +137,15 @@
               />
             </label>
             <div class="preset-actions span-full">
-              <button id="save-preset" class="secondary" type="button">Save Preset</button>
-              <button id="clear-state" class="secondary danger" type="button">
+              <button id="save-preset" class="secondary" type="button" title="Save as a preset">
+                Save Preset
+              </button>
+              <button
+                id="clear-state"
+                class="secondary danger"
+                type="button"
+                title="Clear autosaved state"
+              >
                 Clear Saved State
               </button>
             </div>
@@ -140,8 +159,22 @@
               ></textarea>
             </label>
             <div class="preset-actions span-full">
-              <button id="copy-json" class="secondary" type="button">Copy Current JSON</button>
-              <button id="import-preset" class="secondary" type="button">Apply JSON</button>
+              <button
+                id="copy-json"
+                class="secondary"
+                type="button"
+                title="Copy the current layout JSON"
+              >
+                Copy Current JSON
+              </button>
+              <button
+                id="import-preset"
+                class="secondary"
+                type="button"
+                title="Apply the JSON from the box"
+              >
+                Apply JSON
+              </button>
             </div>
           </div>
         </details>
@@ -182,7 +215,14 @@
           </div>
         </details>
 
-        <button id="download" class="primary" type="button">Download PNG</button>
+        <button
+          id="download"
+          class="primary"
+          type="button"
+          title="Export the current preview as a PNG"
+        >
+          Download PNG
+        </button>
       </section>
 
       <section class="preview" aria-label="Preview">
@@ -198,6 +238,29 @@
         <p class="hint">Preview size: 1080x1350</p>
       </section>
     </main>
+
+    <div id="help-modal" class="modal" hidden>
+      <div class="modal-overlay" data-action="close"></div>
+      <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title">
+        <div class="modal-header">
+          <h2 id="help-title">Quick Workflow</h2>
+          <button id="help-close" class="secondary" type="button" title="Close">
+            Close
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>You can edit the text directly on the preview or in the Events list.</p>
+          <p>
+            For fast edits: click “Copy Current JSON”, paste it into ChatGPT, ask it to
+            fill/update the event info, then paste the JSON back here and click “Apply JSON”.
+          </p>
+          <p>
+            Remember to update the background image so it matches the right country before
+            exporting.
+          </p>
+        </div>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="app.js"></script>

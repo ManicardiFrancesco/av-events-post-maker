@@ -23,6 +23,7 @@ A minimal, user-friendly HTML + JavaScript tool to compose a centered grid layou
 - Presets: save, export JSON, or copy/apply the current JSON from the presets panel.
 - Sections: every panel section is collapsible and remembers its open/closed state.
 - Sample preset: a built-in “sample” preset is always available and loads by default on first use.
+- Help: the ? button opens a quick workflow tip for copy/paste editing via ChatGPT.
 
 ## Notes
 - If a background URL does not download in the PNG, use an uploaded image instead (some hosts block CORS).

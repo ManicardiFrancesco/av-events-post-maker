@@ -33,6 +33,9 @@ const bgUrlInput = $("bg-url");
 const bgFileInput = $("bg-file");
 const downloadButton = $("download");
 const sections = document.querySelectorAll(".section");
+const helpButton = $("help-button");
+const helpModal = $("help-modal");
+const helpClose = $("help-close");
 
 const STORAGE_KEY = "instagram-post-maker:v1";
 const PRESETS_KEY = "instagram-post-maker:presets:v1";
@@ -214,6 +217,18 @@ const loadSectionState = () => {
   }
 };
 
+const openHelpModal = () => {
+  if (helpModal) {
+    helpModal.hidden = false;
+  }
+};
+
+const closeHelpModal = () => {
+  if (helpModal) {
+    helpModal.hidden = true;
+  }
+};
+
 const applyState = (payload) => {
   if (!payload || typeof payload !== "object") {
     return;
@@ -358,17 +373,20 @@ const renderPresets = () => {
     loadButton.type = "button";
     loadButton.textContent = "Load";
     loadButton.dataset.action = "load";
+    loadButton.title = "Load this preset";
 
     const exportButton = document.createElement("button");
     exportButton.type = "button";
     exportButton.textContent = "Export";
     exportButton.dataset.action = "export";
+    exportButton.title = "Export preset JSON";
 
     const deleteButton = document.createElement("button");
     deleteButton.type = "button";
     deleteButton.textContent = "Delete";
     deleteButton.className = "danger";
     deleteButton.dataset.action = "delete";
+    deleteButton.title = "Delete this preset";
     if (preset.locked || preset.name === SAMPLE_PRESET.name) {
       deleteButton.disabled = true;
       deleteButton.title = "Sample preset cannot be deleted.";
@@ -574,6 +592,7 @@ const renderEditors = () => {
     removeButton.className = "event-editor-remove";
     removeButton.textContent = "Remove";
     removeButton.dataset.action = "remove";
+    removeButton.title = "Remove this event";
 
     header.appendChild(title);
     header.appendChild(removeButton);
@@ -1035,6 +1054,35 @@ importPresetButton.addEventListener("click", () => {
 
 sections.forEach((section) => {
   section.addEventListener("toggle", saveSectionState);
+});
+
+if (helpButton) {
+  helpButton.addEventListener("click", openHelpModal);
+}
+
+if (helpClose) {
+  helpClose.addEventListener("click", closeHelpModal);
+}
+
+if (helpModal) {
+  helpModal.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    if (target.dataset.action === "close" || target.classList.contains("modal-overlay")) {
+      closeHelpModal();
+    }
+  });
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") {
+    return;
+  }
+  if (helpModal && !helpModal.hidden) {
+    closeHelpModal();
+  }
 });
 
 const makeFilename = () => {
