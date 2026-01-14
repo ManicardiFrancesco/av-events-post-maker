@@ -38,7 +38,7 @@ const PRESETS_KEY = "instagram-post-maker:presets:v1";
 const SECTION_STATE_KEY = "instagram-post-maker:sections:v1";
 
 const SAMPLE_PRESET = {
-  name: "asd",
+  name: "sample",
   data: {
     grid: {
       cols: 3,
